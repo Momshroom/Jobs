@@ -249,7 +249,7 @@ public class BufferedEconomy {
 	  Boolean actionBarsDefaultOn = Jobs.getGCManager().ActionBarsMessageByDefault;
 
 	//Whether or not to show this player actionbars.  Gets player setting and defaults to server config setting.
-		Boolean show = ToggleBarHandling.getActionBarToggle().getOrDefault(playerUUID.toString(), ActionBarsDefaultOn);
+		Boolean show = ToggleBarHandling.getActionBarToggle().getOrDefault(playerUUID.toString(), actionBarsDefaultOn);
 	  Player abp = Bukkit.getPlayer(playerUUID);
 	  if (abp != null) {
 	    String Message = Jobs.getLanguage().getMessage("command.toggle.output.paid.main");
