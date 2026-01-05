@@ -12,7 +12,7 @@ import com.gamingmesh.jobs.i18n.Language;
 
 import net.Zrips.CMILib.Colors.CMIChatColor;
 
-public class demote implements Cmd {
+public class deluser implements Cmd {
 
     @Override
     public Boolean perform(Jobs plugin, CommandSender sender, String[] args) {
