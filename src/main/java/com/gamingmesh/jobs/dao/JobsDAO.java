@@ -883,7 +883,8 @@ public abstract class JobsDAO {
 
         PreparedStatement prest = null;
         try {
-            prest = conn.prepareStatement("DELETE FROM `" + DBTables.UsersTable.getTableName() + "` WHERE `" + UserTableFields.player_uuid.getCollumn() + "` = `" + uuid + "`;`");
+            prest = conn.prepareStatement("DELETE FROM `" + DBTables.UsersTable.getTableName() + "` WHERE `" + UserTableFields.player_uuid.getCollumn() + "` = ? ;");
+            prest.setString(1, uuid.toString());
             prest.execute();
         } catch (SQLException e) {
             e.printStackTrace();
