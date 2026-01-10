@@ -599,6 +599,56 @@ public class PlayerManager {
     }
 
     /**
+     * Causes player to leave the given job and doesn't archive the data
+     *
+     * @param jPlayer {@link JobsPlayer}
+     * @param job {@link Job}
+     */
+    public boolean deletePlayerJob(JobsPlayer jPlayer, Job job) {
+        if (jPlayer == null || !jPlayer.isInJob(job))
+            return false;
+
+        JobsLeaveEvent jobsLeaveEvent = new JobsLeaveEvent(jPlayer, job);
+        plugin.getServer().getPluginManager().callEvent(jobsLeaveEvent);
+        // If event is canceled, don't do anything
+        if (jobsLeaveEvent.isCancelled())
+            return false;
+
+        // let the user leave the job
+        if (!jPlayer.leaveJob(job))
+            return false;
+
+        if (!Jobs.getJobsDAO().quitJob(jPlayer, job))
+            return false;
+
+        performCommandsOnLeave(jPlayer, job);
+        Jobs.leaveSlot(job);
+
+        jPlayer.getLeftTimes().remove(jPlayer.getUniqueId());
+
+        Jobs.getSignUtil().updateAllSign(job);
+
+        job.modifyTotalPlayerWorking(-1);
+
+        // Removing from cached item boost for recalculation
+        cache.remove(jPlayer.getUniqueId());
+
+        return true;
+    }
+
+    /**
+     * Deletes all job data for a player from all jobs
+     *
+     * @param jPlayer {@link JobsPlayer}
+     */
+    public void deleteAllJobs(JobsPlayer jPlayer) {
+        for (JobProgression job : new ArrayList<>(jPlayer.getJobProgression()))
+            deletePlayerJob(jPlayer, job.getJob());
+
+        jPlayer.leaveAllJobs();
+    }
+
+    /**
      * Transfers player job to a new one
      *
      * @param jPlayer {@link JobsPlayer}

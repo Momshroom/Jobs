@@ -1,5 +1,6 @@
 package com.gamingmesh.jobs.commands.list;
 
+import com.gamingmesh.jobs.PlayerManager;
 import com.gamingmesh.jobs.dao.JobsDAO;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,7 +21,8 @@ public class deluser implements Cmd {
             return false;
         }
 
-        JobsPlayer jPlayer = Jobs.getPlayerManager().getJobsPlayer(args[0]);
+        PlayerManager playerManager = Jobs.getPlayerManager();
+        JobsPlayer jPlayer = playerManager.getJobsPlayer(args[0]);
         if (jPlayer == null) {
             Language.sendMessage(sender, "general.error.noinfoByPlayer", "%playername%", args[0]);
             return true;
@@ -31,6 +33,11 @@ public class deluser implements Cmd {
             if (player != null) {
                 Language.sendMessage(sender, "command.deluser.output.target");
             }
+
+            // remove player job data
+            playerManager.deleteAllJobs(jPlayer);
+
+            // remove player from user DB
             Jobs.getJobsDAO().delUser(jPlayer.playerUUID);
 
             Language.sendMessage(sender, "general.admin.success");
