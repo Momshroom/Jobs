@@ -564,6 +564,17 @@ public class PlayerManager {
 
         Jobs.getJobsDAO().recordToArchive(jPlayer, job);
 
+        return cleanupLeavingJob(jPlayer, job);
+    }
+
+    /**
+     * Does the needed cleanup for player to leave the given job.
+     *
+     * @param jPlayer {@link JobsPlayer}
+     * @param job {@link Job}
+     */
+    private boolean cleanupLeavingJob(JobsPlayer jPlayer, Job job) {
+
         // let the user leave the job
         if (!jPlayer.leaveJob(job))
             return false;
@@ -614,26 +625,7 @@ public class PlayerManager {
         if (jobsLeaveEvent.isCancelled())
             return false;
 
-        // let the user leave the job
-        if (!jPlayer.leaveJob(job))
-            return false;
-
-        if (!Jobs.getJobsDAO().quitJob(jPlayer, job))
-            return false;
-
-        performCommandsOnLeave(jPlayer, job);
-        Jobs.leaveSlot(job);
-
-        jPlayer.getLeftTimes().remove(jPlayer.getUniqueId());
-
-        Jobs.getSignUtil().updateAllSign(job);
-
-        job.modifyTotalPlayerWorking(-1);
-
-        // Removing from cached item boost for recalculation
-        cache.remove(jPlayer.getUniqueId());
-
-        return true;
+        return cleanupLeavingJob(jPlayer, job);
     }
 
     /**
@@ -969,7 +961,7 @@ public class PlayerManager {
      * Performs command on level up
      *
      * @param jPlayer {@link JobsPlayer}
-     * @param job {@link Job}
+     * @param prog {@link JobProgression}
      * @param oldLevel
      */
     public void performCommandOnLevelUp(JobsPlayer jPlayer, JobProgression prog, int oldLevel) {
@@ -1001,7 +993,7 @@ public class PlayerManager {
      * Performs command for each level
      *
      * @param jPlayer {@link JobsPlayer}
-     * @param job {@link Job}
+     * @param prog {@link JobProgression}
      * @param oldLevel
      */
     public void performCommandOnLevelUp(JobsPlayer jPlayer, JobProgression prog, int oldLevel, int untilLevel) {
@@ -1016,7 +1008,7 @@ public class PlayerManager {
     /**
      * Checks whenever the given jobs player is under the max allowed jobs.
      *
-     * @param player {@link JobsPlayer}
+     * @param jPlayer {@link JobsPlayer}
      * @param currentCount the current jobs size
      * @return true if the player is under the given jobs size
      */
