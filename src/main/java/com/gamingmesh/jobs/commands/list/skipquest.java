@@ -57,7 +57,7 @@ public class skipquest implements Cmd {
 
             // sender isn't player: check if they have admin perms
             if (jPlayer != null) {
-                if (!sender.hasPermission("jobs.command.admin.skipquest" )) {
+                if (!jPlayerSender.equals(jPlayer) && !sender.hasPermission("jobs.command.admin.skipquest" )) {
                     new RawMessage().addText(LC.info_NoPermission.getLocale())
                             .addHover("&2jobs.command.admin.skipquest").show(sender);
                     return null;
